@@ -1,13 +1,8 @@
-#include <Halide.h>
-#include "halide_image_io.h"
+#include "halide_cv_utils.h"
 
 using namespace Halide::Tools;
 using namespace Halide;
 using namespace std;
-
-float RGB2Y[3] = {0.299, 0.587, 0.114};
-
-Func gray(Func in);
 
 int main(int argc, char **argv) {
     if(argc == 1){
@@ -29,19 +24,4 @@ int main(int argc, char **argv) {
     Func res = gray(in);
     Buffer<uint8_t> output = res.realize(input.width(), input.height());
     save_image(output,"images/canny.png");
-}
-
-
-Func gray(Func in){
-    Var x("x1"), y("y1"), c("c1");
-
-    Func casted("casted");
-    casted(x, y, c) = cast<float>(in(x, y, c));
-    Expr ycomp = 0;
-    for(int i = 0; i < 3; i++)
-        ycomp += RGB2Y[i] * casted(x, y, i);
-
-    Func gr("gray");
-    gr(x, y) = cast<uint8_t>(ycomp);
-    return gr;
 }

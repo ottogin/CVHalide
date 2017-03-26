@@ -1,22 +1,36 @@
 CC = g++
-CFLAGS = -g -I $(HALIDE_PATH)/cmake_build/include -I $(HALIDE_PATH)/tools -L \
-		 $(HALIDE_PATH)/cmake_build/lib -L $(HALIDE_PATH)/cmake_build/bin -lHalide\
-		 `pkg-config --cflags --libs libpng` -L /usr/lib/x86_64-linux-gnu\
-		 -ljpeg  -lpthread -ldl
+CFLAGS = -g -Wall -std=c++11
 
-all: canny brightner
+IMGFLAGS = `pkg-config --cflags --libs libpng` -L /usr/lib/x86_64-linux-gnu\
+			-ljpeg
+HALIDEFLAGS = -I $(HALIDE_PATH)/cmake_build/include -I $(HALIDE_PATH)/tools -L \
+		 		$(HALIDE_PATH)/cmake_build/lib -L $(HALIDE_PATH)/cmake_build/bin\
+				-lHalide -lpthread -ldl
 
-canny: canny.cpp
-	$(CC) $^ $(CFLAGS) -o $@ -std=c++11
+OPENCVFLAGS = `pkg-config --cflags --libs opencv`
+
+all: canny brightner times
+
+canny: canny.cpp libhalide_cv_utils.a
+	$(CC) $^ $(CFLAGS) $(HALIDEFLAGS) $(IMGFLAGS) -o $@
 
 brightner: brightner.cpp
-	$(CC) $^ $(CFLAGS) -o $@ -std=c++11
+	$(CC) $^ $(CFLAGS) $(HALIDEFLAGS) $(IMGFLAGS) -o $@
 
-init:
-	export HALIDE_PATH=$(HOME)/Proga/GSOC/Halide
-	export LD_LIBRARY_PATH=$(HALIDE)/bin
+times: gray_filter_times_comparing.cpp libhalide_cv_utils.a
+	$(CC) $^ $(CFLAGS) $(HALIDEFLAGS) $(IMGFLAGS) $(OPENCVFLAGS) -o $@
+
+libhalide_cv_utils.a: halide_cv_utils.o
+			ar rcs $@ $^
+
+halide_cv_utils.o: halide_cv_utils.cpp
+	$(CC) $(CFLAGS) $(IMGFLAGS) $(HALIDEFLAGS) -c -o $@ $<
+
+libhalide_cv_utils.a canny.o brightner.o: halide_cv_utils.h
+
+
 
 clean:
-	rm -rf canny brightner
+	rm -rf *.o *.a canny brightner times
 
-.PHONY: canny clean brightner init
+.PHONY: canny clean brightner init times
