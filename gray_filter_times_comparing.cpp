@@ -12,7 +12,7 @@ using namespace Halide;
 using namespace std;
 using namespace cv;
 
-#define ITERS 10
+#define ITERS 1000
 
 int main(int argc, char **argv){
     if(argc == 1){
@@ -54,7 +54,7 @@ int main(int argc, char **argv){
     printf("Halide: %lf\n", accum);
 
     Mat gray_image;
-    
+
     //START PROCESSING IMAGE with OPENCV
     clock_gettime(CLOCK_REALTIME, &start_time);
     for(int i = 0; i < ITERS; i++){
