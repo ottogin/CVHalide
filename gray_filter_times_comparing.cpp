@@ -35,6 +35,8 @@ int main(int argc, char **argv){
     Buffer<uint8_t> halide_output (halide_input.width(), halide_input.height());
     res.compile_jit();
 
+    cvtColor(opencv_input, opencv_output, CV_BGR2GRAY );
+
 
     //START PROCESSING IMAGE with HALIDE
     auto t1 = std::chrono::high_resolution_clock::now();
@@ -45,8 +47,7 @@ int main(int argc, char **argv){
     auto t2 = std::chrono::high_resolution_clock::now();
     double dt = std::chrono::duration_cast<std::chrono::microseconds>\
                                             (t2 - t1).count() / 1e6 / ITERS;
-    printf("Halide: %lfms\n", dt);
-
+    printf("Halide: %lfs\n", dt);
 
     //START PROCESSING IMAGE with OPENCV
     t1 = std::chrono::high_resolution_clock::now();
@@ -56,5 +57,5 @@ int main(int argc, char **argv){
     t2 = std::chrono::high_resolution_clock::now();
     dt = std::chrono::duration_cast<std::chrono::microseconds>\
                                             (t2 - t1).count() / 1e6 / ITERS;
-    printf("OpenCV: %lfms\n", dt);
+    printf("OpenCV: %lfs\n", dt);
 }
