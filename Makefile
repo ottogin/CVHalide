@@ -9,16 +9,16 @@ HALIDEFLAGS = -I $(HALIDE_PATH)/cmake_build/include -I $(HALIDE_PATH)/tools -L \
 
 OPENCVFLAGS = `pkg-config --cflags --libs opencv`
 
-all: canny brightner times
-
-canny: canny.cpp libhalide_cv_utils.a
-	$(CC) $^ $(CFLAGS) $(HALIDEFLAGS) $(IMGFLAGS) -o $@
-
-brightner: brightner.cpp
-	$(CC) $^ $(CFLAGS) $(HALIDEFLAGS) $(IMGFLAGS) -o $@
+all: times test to_gray
 
 times: gray_filter_times_comparing.cpp libhalide_cv_utils.a
 	$(CC) $^ $(CFLAGS) $(HALIDEFLAGS) $(IMGFLAGS) $(OPENCVFLAGS) -o $@
+
+test: gray_filter_test.cpp libhalide_cv_utils.a
+	$(CC) $^ $(CFLAGS) $(HALIDEFLAGS) $(IMGFLAGS) $(OPENCVFLAGS) -o $@
+
+to_gray: to_gray.cpp libhalide_cv_utils.a
+	$(CC) $^ $(CFLAGS) $(HALIDEFLAGS) $(IMGFLAGS) -o $@
 
 libhalide_cv_utils.a: halide_cv_utils.o
 			ar rcs $@ $^
@@ -26,11 +26,9 @@ libhalide_cv_utils.a: halide_cv_utils.o
 halide_cv_utils.o: halide_cv_utils.cpp
 	$(CC) $(CFLAGS) $(IMGFLAGS) $(HALIDEFLAGS) -c -o $@ $<
 
-libhalide_cv_utils.a canny.o brightner.o: halide_cv_utils.h
-
-
+libhalide_cv_utils.a test times: halide_cv_utils.h
 
 clean:
-	rm -rf *.o *.a canny brightner times
+	rm -rf *.o *.a times test to_gray
 
-.PHONY: canny clean brightner init times
+.PHONY: clean

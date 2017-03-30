@@ -4,6 +4,6 @@
 #include <Halide.h>
 #include "halide_image_io.h"
 
-Halide::Func gray(Halide::Func in);
+Halide::Func gray(Halide::Buffer<uint8_t> in);
 
 #endif

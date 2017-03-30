@@ -17,11 +17,7 @@ int main(int argc, char **argv) {
         return 0;
     }
 
-    Var x("x"), y("y"), c("c");
-    Func in("in");
-    in(x,y,c) = input(clamp(x,0,input.width() - 1) , clamp(y,0,input.height() - 1), c);
-
-    Func res = gray(in);
+    Func res = gray(input);
     Buffer<uint8_t> output = res.realize(input.width(), input.height());
-    save_image(output,"images/canny.png");
+    save_image(output,"images/gray.png");
 }
