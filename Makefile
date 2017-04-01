@@ -18,13 +18,13 @@ test: gray_filter_test.cpp libhalide_cv_utils.a
 	$(CC) $^ $(CFLAGS) $(HALIDEFLAGS) $(IMGFLAGS) $(OPENCVFLAGS) -o $@
 
 to_gray: to_gray.cpp libhalide_cv_utils.a
-	$(CC) $^ $(CFLAGS) $(HALIDEFLAGS) $(IMGFLAGS) -o $@
+	$(CC) $^ $(CFLAGS) $(HALIDEFLAGS) $(IMGFLAGS) $(OPENCVFLAGS) -o $@
 
 libhalide_cv_utils.a: halide_cv_utils.o
 			ar rcs $@ $^
 
 halide_cv_utils.o: halide_cv_utils.cpp
-	$(CC) $(CFLAGS) $(IMGFLAGS) $(HALIDEFLAGS) -c -o $@ $<
+	$(CC) $(CFLAGS) $(IMGFLAGS) $(HALIDEFLAGS) $(OPENCVFLAGS) -c -o $@ $<
 
 libhalide_cv_utils.a test times: halide_cv_utils.h
 

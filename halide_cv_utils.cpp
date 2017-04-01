@@ -5,6 +5,13 @@ uint16_t RGB2Y[3] = {4899,  9617, 1868};
 Halide::Func gray(Halide::Buffer<uint8_t> in){
     Halide::Var x("x1"), y("y1"), c("c1");
 
+    //TODO: make assert instead
+    if(in.channels() != 3){
+        Halide::Func ret;
+        ret(x, y, c) = in(x, y , c);
+        return ret;
+    }
+
 
     Halide::Func casted("casted");
     casted(x, y, c) = Halide::cast<uint32_t>(in(x, y, c));
@@ -27,5 +34,6 @@ Halide::Func gray(Halide::Buffer<uint8_t> in){
     gr.tile(x_inner, y_inner, x_inner_outer, y_inner_outer, x_vectors, y_pairs, 4, 2)
       .vectorize(x_vectors)
       .unroll(y_pairs);
+
     return gr;
 }

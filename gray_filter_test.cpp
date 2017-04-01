@@ -7,7 +7,6 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
-using namespace Halide::Tools;
 using namespace Halide;
 using namespace std;
 using namespace cv;
@@ -19,10 +18,12 @@ int main(int argc, char **argv){
     }
 
     Mat opencv_input, opencv_output;
-    Buffer<uint8_t> halide_input;
 
-    halide_input = load_image(argv[1]);
     opencv_input = imread(argv[1], CV_LOAD_IMAGE_COLOR);
+    Buffer<uint8_t> halide_input = Runtime::Buffer<uint8_t>::make_interleaved(
+                                    opencv_input.data, opencv_input.cols,
+                                    opencv_input.rows, opencv_input.channels());
+
 
     if(halide_input.channels() != 3){
         printf("Sorry, this script still works only with 3-channel images\n");
